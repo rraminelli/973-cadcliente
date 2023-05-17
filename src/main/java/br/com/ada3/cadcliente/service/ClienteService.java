@@ -14,6 +14,12 @@ public class ClienteService {
     }
 
     public ClienteModel salva(ClienteModel clienteModel) {
+        if (clienteModel.getNome() == null) {
+            throw new RuntimeException("Nome é obrigatório");
+        }
+        if (clienteModel.getEmail() == null) {
+            throw new RuntimeException("Email é obrigatório");
+        }
         return clienteRepository.save(clienteModel);
     }
 
@@ -22,7 +28,11 @@ public class ClienteService {
     }
 
     public ClienteModel getById(long idCliente) {
-        return clienteRepository.findById(idCliente).orElse(null);
+        ClienteModel clienteModel = clienteRepository.findById(idCliente).orElse(null);
+        if (clienteModel == null) {
+            throw new RuntimeException("ID nao encontrado");
+        }
+        return clienteModel;
     }
 
 }

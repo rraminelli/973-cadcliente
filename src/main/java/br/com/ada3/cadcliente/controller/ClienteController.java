@@ -1,6 +1,7 @@
 package br.com.ada3.cadcliente.controller;
 
 import br.com.ada3.cadcliente.dto.request.ClienteSalvarRequestDto;
+import br.com.ada3.cadcliente.dto.response.ClienteResponseDto;
 import br.com.ada3.cadcliente.dto.response.ClienteSalvarResponseDto;
 import br.com.ada3.cadcliente.model.ClienteModel;
 import br.com.ada3.cadcliente.service.ClienteService;
@@ -33,6 +34,21 @@ public class ClienteController {
         responseDto.setEmail(clienteModel.getEmail());
 
         return responseDto;
+    }
+
+    @GetMapping("/{idCliente}")
+    @ResponseStatus(HttpStatus.OK)
+    public ClienteResponseDto getById(@PathVariable Long idCliente) {
+
+        ClienteModel clienteModel = clienteService.getById(idCliente);
+
+        ClienteResponseDto clienteResponseDto = new ClienteResponseDto();
+        clienteResponseDto.setId(clienteModel.getId());
+        clienteResponseDto.setEmail(clienteModel.getEmail());
+        clienteResponseDto.setNome(clienteModel.getNome());
+
+        return clienteResponseDto;
+
     }
 
 }
