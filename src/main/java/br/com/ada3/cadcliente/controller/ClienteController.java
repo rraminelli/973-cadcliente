@@ -20,7 +20,7 @@ public class ClienteController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ClienteSalvarResponseDto salvar(@RequestBody ClienteSalvarRequestDto requestDto) {
+    public ClienteSalvarResponseDto create(@RequestBody ClienteSalvarRequestDto requestDto) {
 
         ClienteModel clienteModel = new ClienteModel();
         clienteModel.setNome(requestDto.getNome());
@@ -49,6 +49,25 @@ public class ClienteController {
 
         return clienteResponseDto;
 
+    }
+
+    @PutMapping("/{idCliente}")
+    @ResponseStatus(HttpStatus.OK)
+    public ClienteSalvarResponseDto update(@PathVariable Long idCliente, @RequestBody ClienteSalvarRequestDto requestDto) {
+
+        ClienteModel clienteModel = new ClienteModel();
+        clienteModel.setId(idCliente);
+        clienteModel.setNome(requestDto.getNome());
+        clienteModel.setEmail(requestDto.getEmail());
+
+        clienteModel = clienteService.salva(clienteModel);
+
+        ClienteSalvarResponseDto responseDto = new ClienteSalvarResponseDto();
+        responseDto.setId(clienteModel.getId());
+        responseDto.setNome(clienteModel.getNome());
+        responseDto.setEmail(clienteModel.getEmail());
+
+        return responseDto;
     }
 
 }

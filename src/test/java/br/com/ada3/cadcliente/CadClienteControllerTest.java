@@ -73,4 +73,38 @@ public class CadClienteControllerTest {
 
     }
 
+    @Test
+    void atualizar_cliente() {
+
+        ClienteSalvarRequestDto requestDto = new ClienteSalvarRequestDto();
+        requestDto.setNome("cliente test atualizar");
+        requestDto.setEmail("test@test.com");
+
+        ResponseEntity<ClienteSalvarResponseDto> responseDto =
+                restTemplate.exchange(
+                        "/clientes",
+                        HttpMethod.POST,
+                        new HttpEntity<>(requestDto),
+                        ClienteSalvarResponseDto.class);
+
+        Long idCliente = responseDto.getBody().getId();
+
+        requestDto.setNome("nome atualizado");
+        requestDto.setEmail("teste@atualizado.com");
+
+        ResponseEntity<ClienteSalvarResponseDto> responsePutDto =
+                restTemplate.exchange(
+                        "/clientes/" + idCliente,
+                        HttpMethod.PUT,
+                        new HttpEntity<>(requestDto),
+                        ClienteSalvarResponseDto.class);
+
+
+        Assertions.assertEquals(200, responsePutDto.getStatusCode().value());
+        Assertions.assertEquals(idCliente, responsePutDto.getBody().getId());
+        Assertions.assertEquals(requestDto.getNome(), responsePutDto.getBody().getNome());
+        Assertions.assertEquals(requestDto.getEmail(), responsePutDto.getBody().getEmail());
+
+    }
+
 }
