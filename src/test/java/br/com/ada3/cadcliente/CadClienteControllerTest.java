@@ -107,4 +107,42 @@ public class CadClienteControllerTest {
 
     }
 
+    @Test
+    void excluir_cliente() {
+
+        ClienteSalvarRequestDto requestDto = new ClienteSalvarRequestDto();
+        requestDto.setNome("cliente test excluir");
+        requestDto.setEmail("test@test.com");
+
+        ResponseEntity<ClienteSalvarResponseDto> responseDto =
+                restTemplate.exchange(
+                        "/clientes",
+                        HttpMethod.POST,
+                        new HttpEntity<>(requestDto),
+                        ClienteSalvarResponseDto.class);
+
+        Long idCliente = responseDto.getBody().getId();
+
+        ResponseEntity<?> responseDeleteDto =
+                restTemplate.exchange(
+                "/clientes/" + idCliente,
+                HttpMethod.DELETE,
+                null,
+                Object.class
+        );
+
+        Assertions.assertEquals(202, responseDeleteDto.getStatusCode().value());
+
+        ResponseEntity<ClienteResponseDto> responseGetDto =
+                restTemplate.exchange(
+                        "/clientes/" + idCliente,
+                        HttpMethod.GET,
+                        null,
+                        ClienteResponseDto.class);
+
+        Assertions.assertEquals(404, responseGetDto.getStatusCode().value());
+
+
+    }
+
 }

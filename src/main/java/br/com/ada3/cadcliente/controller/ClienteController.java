@@ -70,4 +70,10 @@ public class ClienteController {
         return responseDto;
     }
 
+    @DeleteMapping("/{idCliente}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void delete(@PathVariable Long idCliente) {
+        clienteService.excluir(idCliente);
+    }
+
 }

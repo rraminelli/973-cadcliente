@@ -1,0 +1,1 @@
+mvn clean verify sonar:sonar -Dsonar.projectKey=cadcliente -Dsonar.host.url=http://localhost:9000 -Dsonar.login=sqp_b1ed21b4031d7862e8d9e1720ad452313f7ee11e

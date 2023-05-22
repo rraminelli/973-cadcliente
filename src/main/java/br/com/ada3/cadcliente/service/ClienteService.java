@@ -1,5 +1,7 @@
 package br.com.ada3.cadcliente.service;
 
+import br.com.ada3.cadcliente.exception.NotFoundException;
+import br.com.ada3.cadcliente.exception.ValidationException;
 import br.com.ada3.cadcliente.model.ClienteModel;
 import br.com.ada3.cadcliente.repository.ClienteRepository;
 import org.springframework.stereotype.Service;
@@ -15,10 +17,10 @@ public class ClienteService {
 
     public ClienteModel salva(ClienteModel clienteModel) {
         if (clienteModel.getNome() == null) {
-            throw new RuntimeException("Nome é obrigatório");
+            throw new ValidationException("Nome é obrigatório");
         }
         if (clienteModel.getEmail() == null) {
-            throw new RuntimeException("Email é obrigatório");
+            throw new ValidationException("Email é obrigatório");
         }
         return clienteRepository.save(clienteModel);
     }
@@ -30,7 +32,7 @@ public class ClienteService {
     public ClienteModel getById(long idCliente) {
         ClienteModel clienteModel = clienteRepository.findById(idCliente).orElse(null);
         if (clienteModel == null) {
-            throw new RuntimeException("ID nao encontrado");
+            throw new NotFoundException("ID nao encontrado");
         }
         return clienteModel;
     }
