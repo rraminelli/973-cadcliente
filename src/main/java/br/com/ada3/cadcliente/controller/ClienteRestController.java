@@ -8,6 +8,9 @@ import br.com.ada3.cadcliente.service.ClienteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/clientes")
 public class ClienteRestController {
@@ -34,6 +37,26 @@ public class ClienteRestController {
         responseDto.setEmail(clienteModel.getEmail());
 
         return responseDto;
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<ClienteResponseDto> findAll() {
+
+        List<ClienteResponseDto> responseDtoList = new ArrayList<>();
+
+        List<ClienteModel> clienteModelList = clienteService.listarTodos();
+
+        clienteModelList.forEach(clienteModel -> {
+            ClienteResponseDto clienteResponseDto = new ClienteResponseDto();
+            clienteResponseDto.setId(clienteModel.getId());
+            clienteResponseDto.setEmail(clienteModel.getEmail());
+            clienteResponseDto.setNome(clienteModel.getNome());
+            responseDtoList.add(clienteResponseDto);
+        });
+
+        return responseDtoList;
+
     }
 
     @GetMapping("/{idCliente}")
