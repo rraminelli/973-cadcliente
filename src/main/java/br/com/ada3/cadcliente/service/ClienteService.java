@@ -6,6 +6,8 @@ import br.com.ada3.cadcliente.model.ClienteModel;
 import br.com.ada3.cadcliente.repository.ClienteRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ClienteService {
 
@@ -36,5 +38,10 @@ public class ClienteService {
         }
         return clienteModel;
     }
+
+    public List<ClienteModel> listarTodos() {
+        return clienteRepository.findAll();
+    }
+
 
 }

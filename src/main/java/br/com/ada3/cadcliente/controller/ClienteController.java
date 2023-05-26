@@ -1,15 +1,18 @@
 package br.com.ada3.cadcliente.controller;
 
 import br.com.ada3.cadcliente.dto.request.ClienteSalvarRequestDto;
-import br.com.ada3.cadcliente.dto.response.ClienteResponseDto;
 import br.com.ada3.cadcliente.dto.response.ClienteSalvarResponseDto;
 import br.com.ada3.cadcliente.model.ClienteModel;
 import br.com.ada3.cadcliente.service.ClienteService;
-import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("/clientes")
+import java.util.List;
+
+@RequestMapping("/cliente")
+@Controller
 public class ClienteController {
 
     final ClienteService clienteService;
@@ -18,62 +21,34 @@ public class ClienteController {
         this.clienteService = clienteService;
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ClienteSalvarResponseDto create(@RequestBody ClienteSalvarRequestDto requestDto) {
-
-        ClienteModel clienteModel = new ClienteModel();
-        clienteModel.setNome(requestDto.getNome());
-        clienteModel.setEmail(requestDto.getEmail());
-
-        clienteModel = clienteService.salva(clienteModel);
-
-        ClienteSalvarResponseDto responseDto = new ClienteSalvarResponseDto();
-        responseDto.setId(clienteModel.getId());
-        responseDto.setNome(clienteModel.getNome());
-        responseDto.setEmail(clienteModel.getEmail());
-
-        return responseDto;
+    @GetMapping
+    public String listaTodos(Model model) {
+        List<ClienteModel> clientes = clienteService.listarTodos();
+        clientes.sort((o1, o2) -> o2.getId().compareTo(o1.getId()));
+        model.addAttribute("clientes", clientes);
+        return "cliente-list";
     }
 
-    @GetMapping("/{idCliente}")
-    @ResponseStatus(HttpStatus.OK)
-    public ClienteResponseDto getById(@PathVariable Long idCliente) {
-
-        ClienteModel clienteModel = clienteService.getById(idCliente);
-
-        ClienteResponseDto clienteResponseDto = new ClienteResponseDto();
-        clienteResponseDto.setId(clienteModel.getId());
-        clienteResponseDto.setEmail(clienteModel.getEmail());
-        clienteResponseDto.setNome(clienteModel.getNome());
-
-        return clienteResponseDto;
-
+    @GetMapping("/novo")
+    public String novo(Model model) {
+        model.addAttribute("cliente", new ClienteSalvarRequestDto());
+        return "cliente-edit";
     }
 
-    @PutMapping("/{idCliente}")
-    @ResponseStatus(HttpStatus.OK)
-    public ClienteSalvarResponseDto update(@PathVariable Long idCliente, @RequestBody ClienteSalvarRequestDto requestDto) {
+    @PostMapping("/salva")
+    public String salva(@ModelAttribute ClienteSalvarResponseDto clienteDto, BindingResult errors) {
 
-        ClienteModel clienteModel = new ClienteModel();
-        clienteModel.setId(idCliente);
-        clienteModel.setNome(requestDto.getNome());
-        clienteModel.setEmail(requestDto.getEmail());
+        if (errors.hasErrors()) {
+            return "cliente-edit";
+        }
 
-        clienteModel = clienteService.salva(clienteModel);
+        ClienteModel cliente = new ClienteModel();
+        cliente.setNome(clienteDto.getNome());
+        cliente.setEmail(clienteDto.getEmail());
 
-        ClienteSalvarResponseDto responseDto = new ClienteSalvarResponseDto();
-        responseDto.setId(clienteModel.getId());
-        responseDto.setNome(clienteModel.getNome());
-        responseDto.setEmail(clienteModel.getEmail());
+        clienteService.salva(cliente);
 
-        return responseDto;
-    }
-
-    @DeleteMapping("/{idCliente}")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public void delete(@PathVariable Long idCliente) {
-        clienteService.excluir(idCliente);
+        return "redirect:/cliente";
     }
 
 }
